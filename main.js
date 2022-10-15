@@ -1,66 +1,71 @@
 
 const canvas=document.getElementById('rootCanvas');
 const ctx=canvas.getContext('2d')
-const CANVAS_WIDTH=canvas.width=600;
-const CANVAS_HEIGHT=canvas.height=600;
-const spriteWidth=575;
-const spriteHeight=523;
-let frameX=0;
-let frameY=0;
-const playerImage=new Image();
-playerImage.src='shadow_dog.png';
-let gameFrame=0;
-let staggerFrames=5;
+const CANVAS_WIDTH=canvas.width=800;
+const CANVAS_HEIGHT=canvas.height=700;
 
-const animationsStates = [
-    { name: "idle", frame: 7 },
-    { name: "jump", frame: 7 },
-    { name: "fall", frame: 7 },
-    { name: "run", frame: 9 },
-    { name: "dizzy", frame: 11 },
-    { name: "sit", frame: 5 },
-    { name: "roll", frame: 7 },
-    { name: "bit", frame: 7 },
-    { name: "ko", frame: 12 },
-    { name: "getHit", frame: 4 },
-];
-const spriteAnimations=[];
-animationsStates.forEach((state,index)=>{
-    let o={
-        loc:[]
-    };
-    for(let i=0;i<state.frame;i++){
-        let x=i*spriteWidth;
-        let y=index*spriteHeight;
-        o.loc.push({x,y})
+const bg_layer1=new Image();
+bg_layer1.src="assets/layer-1.png"
+const bg_layer2=new Image();
+bg_layer2.src="assets/layer-2.png"
+const bg_layer3=new Image();
+bg_layer3.src="assets/layer-3.png"
+const bg_layer4=new Image();
+bg_layer4.src="assets/layer-4.png"
+const bg_layer5=new Image();
+bg_layer5.src="assets/layer-5.png"
+
+const imageWidth=2400;
+let x=0;
+let y=imageWidth;
+let gameSpeed=5;
+
+const slider=document.getElementById('slider');
+slider.value=gameSpeed;
+const spanShowSpeed=document.getElementById('show_speed');
+spanShowSpeed.innerHTML=gameSpeed;
+slider.addEventListener(('change'),(e)=>{
+    gameSpeed=e.target.value;
+    spanShowSpeed.innerHTML=gameSpeed;
+});
+
+
+class Layer{
+    constructor(image,speedModifier){
+        this.x=0;
+        this.y=0;
+        this.width=2400;
+        this.height=700;
+        this.image=image;
+        this.speedModifier=speedModifier;
+        this.speed=speedModifier*gameSpeed;
     }
-    spriteAnimations[state.name]=o
-})
-let animationName='run';
-document.getElementById('selector').addEventListener('change',(e)=>{
-
-    animationName=e.target.value
-})
+    update(){
+        this.speed=this.speedModifier*gameSpeed;
+        if(this.x<=-this.width){
+            this.x=0
+        } 
+        this.x-=gameSpeed;
+    }
+    draw(){
+        ctx.drawImage(this.image,this.x,this.y,this.width,this.height)
+        ctx.drawImage(this.image,this.x+this.width,this.y,this.width,this.height)        
+    }
+}
+const layers=[
+    new Layer(bg_layer1,0.5),
+    new Layer(bg_layer2,0.5),
+    new Layer(bg_layer3,0.5),
+    new Layer(bg_layer4,0.5),
+    new Layer(bg_layer5,1),
+]
 
 function animate(){
     ctx.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
-    // ctx.fillRect(50,50,100,100)
-    let position=Math.floor(gameFrame/staggerFrames)%spriteAnimations[animationName].loc.length;
-
-    frameX=spriteAnimations[animationName].loc[position].x;
-    frameY=spriteAnimations[animationName].loc[position].y
-    ctx.drawImage(playerImage,frameX,frameY,spriteWidth,spriteHeight,0,0,spriteWidth,spriteHeight)
-    // animate()
-    if(gameFrame %staggerFrames==0){
-        if(frameX<6)
-        frameX++;
-        else frameX=0
-    }
+    layers.forEach(layer=>{
+        layer.draw();
+        layer.update()
+    })
     requestAnimationFrame(animate)
-    gameFrame++
 }
-
-// setTimeout(()=>{
-//     animate()
-// )
 animate()

@@ -8,27 +8,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <canvas id="rootCanvas">
-    </canvas>
-   <div class="select_container">
-    <label for="selector">
-        Choose Animations:
-    </label>
-    <select id="selector" name="selector" >
-        
-        <option value="idle" >idle</option>
-        <option value="jump">jump</option>
-        <option value="fall">fall</option>
-        <option value="run" selected>run</option>
-        <option value="dizzy">dizzy</option>
-        <option value="sit">sit</option>
-        <option value="roll">roll</option>
-        <option value="bit">bit</option>
-        <option value="ko">ko</option>
-        <option value="getHit">getHit</option>
-    </select>
-   </div>
-    
+    <div class="container">
+        <canvas id="rootCanvas"></canvas> 
+        <h4>Game Speed <span id="show_speed"></span></h4>
+        <input type="range" value="5" min="0" max="50" id="slider" >
+    </div>
     <script src="main.js"></script>
 </body>
 </html>
